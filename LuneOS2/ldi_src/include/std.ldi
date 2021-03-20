@@ -1,0 +1,9 @@
+.A<0>
+.SR<4>
+.PC<5>
+.DSC<9>
+.FSC<10>
+.datastack<256>
+.funcstack<512>
+.videomem<768>
+.exit<brk--->

@@ -1,0 +1,61 @@
+.A<0>
+.SR<4>
+.PC<5>
+.DSC<9>
+.FSC<10>
+.datastack<256>
+.funcstack<512>
+.videomem<768>
+.exit<brk--->
+
+/start
+lda---0
+sta---color
+
+/loopup
+
+lda--1-videomem
+sta--1-cursor
+
+lda--1-100000000
+push--1-
+jsr---delay
+
+/loop
+	lda-1--color
+	sta-1--cursor
+	
+	lda-1-1-cursor
+	add--1-1
+	sta--1-cursor
+	
+	xor--1-64768
+	jit---loop
+	
+[	jmp---loop]
+/next
+lda-1--SR
+or---4
+sta---SR
+
+lda-1--color
+add---1
+sta---color
+jit---end
+jmp---loopup
+
+
+/end ,exit
+/cursor =4
+/color =1
+
+[/////////////////////function delay ticks]
+/delay
+
+pop--1-
+/delay_loop
+sbc--1-1
+jit---enddelay
+jmp---delay_loop
+
+/enddelay rst---

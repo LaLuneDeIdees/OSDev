@@ -1,0 +1,38 @@
+lda 10;sta setPixel_x;sta setPixel_y;lda 48;sta setPixel_ch
+start:
+          nop 100000000
+          lda 4;sta 1;lda $2;sta setPixel_ret_1;lda $3;sta setPixel_ret_2;lda $4;sta setPixel_ret_5;lda $5;sta setPixel_ret_4;jmp setPixel
+
+          lda 1;sta 22
+          jmp start
+end:
+          brk
+cur:23
+cur_1:0;0;0
+ch:48
+
+|---------------------------------------------------------------------------------------------------------------------------------|
+| set char(*_ch) to *_x *_y                                                                                                       |
+| lda 4;sta 1;lda $2;sta setPixel_ret_1;lda $3;sta setPixel_ret_2;lda $4;sta setPixel_ret_5;lda $5;sta setPixel_ret_4;jmp setPixel|
+|---------------------------------------------------------------------------------------------------------------------------------|
+setPixel_x:0
+          setPixel_y:0
+          setPixel_ch:32
+          setPixel_ret_1:0;setPixel_ret_2:0;setPixel_ret_3:0;setPixel_ret_4:0
+          setPixel_cursor:23;setPixel_cursor_1:0;0;0
+          setPixel:
+                    lda 0;sta 1
+                    lda 79;sub $setPixel_x;jit setPixel_return
+                    lda 24;sub $setPixel_y;jit setPixel_return
+          setPixel_yloop:
+                    lda $setPixel_y;sub 1;sta setPixel_y
+                    jit setPixel_next
+                    lda $setPixel_cursor;add 160;sta setPixel_cursor;lda $setPixel_cursor_1;adc;sta setPixel_cursor_1
+                    jmp setPixel_yloop
+          setPixel_next:
+                    lda $setPixel_cursor;add $setPixel_x;add $setPixel_x;sta setPixel_cursor;lda $setPixel_cursor_1;adc;sta setPixel_cursor_1
+                    lda $setPixel_ch;sta $setPixel_cursor
+                    lda 23;sta setPixel_cursor;lda 0;sta setPixel_cursor_1
+          setPixel_return:
+                    lda $setPixel_ret_1;add 45;sta setPixel_ret_1;lda $setPixel_ret_2;adc;sta setPixel_ret_2;lda $setPixel_ret_3;adc;sta setPixel_ret_3;lda $setPixel_ret_4;adc;sta setPixel_ret_4
+                    jmp $setPixel_ret_1

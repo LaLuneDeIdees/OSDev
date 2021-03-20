@@ -1,0 +1,33 @@
+start:
+          nop 100000999
+          lda 2
+          sta 6
+          lda $7
+
+          xor 255
+          jit next
+          jmp start
+next:
+          lda $7
+          and 128
+          jit start
+          lda $7
+          
+          sta $cur
+
+          lda $cur
+          add 2
+          sta cur
+          lda $cur_1
+          adc
+          sta cur_1
+
+          lda 1
+          sta 22
+
+          jmp start
+end:
+          brk
+cur:23
+cur_1:0;0;0
+ch:48

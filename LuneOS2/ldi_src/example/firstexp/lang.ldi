@@ -1,0 +1,23 @@
+
+-code_for_include.ldi
+.macros<123>
+.test<
+lda-3-1-0
+sta---
+>
+/start [test - example  code]
+lda---12
+lda---macros
+sta---data1
+lda-1--data1
+sta---data1
+jmp---end
+/end
+brk---
+
+/data1 
+
+=4
+
+,test
+

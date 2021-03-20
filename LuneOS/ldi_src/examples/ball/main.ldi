@@ -1,0 +1,75 @@
+#!/home/alex/documents/c++/MyProgramLang/build
+start:
+          lda $y
+          sta tmp
+starttmp:
+          lda $tmp
+          sub 1
+          sta tmp
+          jit next
+          lda $cursor;add 80;sta cursor
+          lda $cursor_1;adc;sta cursor_1
+          jmp starttmp
+next:
+          lda $x
+          sta tmp
+
+          lda $cursor;add $tmp;sta cursor
+          lda $cursor_1;adc;sta cursor_1
+
+          lda $ch
+          sta $cursor
+          lda 1
+          sta 38
+
+          lda $x;add $dirX;sta x
+          lda $y;add $dirY;sta y
+
+          lda $x
+          xor 79
+          jit next1
+          lda 0;sub $dirX;sta dirX
+next1:
+          lda $y
+          xor 24
+          jit next2
+          lda 0;sub $dirY;sta dirY
+next2:
+          lda $x
+          xor 0
+          jit next3
+          lda 0;sub $dirX;sta dirX
+next3:
+          lda $y
+          xor 0
+          jit next4
+          lda 0;sub $dirY;sta dirY
+next4:
+
+          lda 39;sta cursor;lda 0;sta cursor_1
+
+tmploop:
+          lda 32
+          sta $cursor
+
+          lda $cursor;add 1;sta cursor;lda $cursor_1;adc;sta cursor_1
+
+          xor 7
+          jit tmploop
+          lda $cursor
+          xor 255
+          jit tmploop
+          jmp next5
+next5:
+          lda 39;sta cursor;lda 0;sta cursor_1
+          nop 20000000
+          jmp start
+end:
+          brk
+cursor:39;cursor_1:0;0;0
+x:39
+y:13
+dirX:1
+dirY:1
+ch:64
+tmp:0

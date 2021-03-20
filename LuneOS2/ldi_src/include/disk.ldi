@@ -1,0 +1,12 @@
+-std.ldi
+.CMD_READ<32>
+.CMD_WRITE<48>
+.BSY_FLAG<128>
+
+.read_sectors_lba<
+	
+>
+
+.write_sectors_lba<
+
+>

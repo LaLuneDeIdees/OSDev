@@ -1,0 +1,5 @@
+#!/bin/bash
+cp $1 ./lang.ldi
+./LdiCompiler
+#/home/alex/documents/c++/MyProgramLang/VM/App
+rm ./lang.ldi

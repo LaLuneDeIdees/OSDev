@@ -1,0 +1,144 @@
+boot with graphics mode 320x200x8 (addressing on 0xA0000)
+
+setup interaputs and create interaput's manager
+
+load main byte-code file 'kernel'
+
+setup virtual space
+
+run bin
+/////////////////////////
+	Program lang
++-------------------+--------+
+| data stack		| 256b   |
+| func stack		| 256b   |
+//| interaput's table	| 64b    |
+| program counter	| 4b     |
+| data stack cursor	| 1b     |
+| func stack cursor	| 1b     |
+| status register	| 1b     |
+| accumulation		| 4b     |
+| video memmory		| 64000b |
++-------------------+--------+
+| summ				| 64584b |
++-------------------+--------+
+
+	Memmory map
++-------------------------------+
+| 0000h :: accumulation			|
+| 0004h :: status register		|
+| 0005h :: program counter		|
+| 0009h :: data stack cursor	|
+| 000ah :: func stack cursor	|
+//| 0008h :: interaput's table	|
+| 0100h :: data stack			|
+| 0200h :: func stack			|
+| 0300h :: video memmory		|
+| 10000h:: user space			|
++-------------------------------+
+
+			Cmd map
+= = = = = = = = = = = = = = = = = = = = = =
+=		  1byte		            =  4byte  =
+=_______________________________=_________=
+=	2bit	=	1bit  =	  5bit  =  32bit  =
+= = = = = = = = = = = = = = = = = = = = = =
+= oper mode = cmdmode = cmd num =  oper*  =
+= = = = = = = = = = = = = = = = = = = = = =
+*optional - if oper is not have oper == 0
+
+if opermode == 0 oper = oper
+else oper = mem[...mem[mem[oper]]...]
+			\__________  ___________/
+					   \/
+					    n
+n = oper mode
+
+cmdmode(default 0) if 1 4byte if 0 1byte
+adressing only 4byte
+this is set for operating with A
+LDA(load 4b) STA(set 4)
+
+		full list
+LDA
+STA
+ADD ADC
+SUB SBC
+POP PUSH
+NOT XOR AND OR
+
+inb outb - only 1b (oper = A & 0x000000FF)
+inw outw - 2b (oper = A & 0x0000FFFF)
+
+		Cmd List
++-------+-------+--------------------------------------------------------------|
+|  BRK  | other | stop os
+|  LDA  |   1   | load oper in acum
+|  STA  |   2   | load acum to addres oper
+|  INB	|	...	|
+|  OUTB	|		|
+|  INW	|		|
+|  OUTW	|		|
+|  JMP	|		|
+|  JSR	|		|
+|  RST	|		|
+|  ADD	|		|
+|  ADC	|		|
+|  SUB	|		|
+|  SBC	|		|
+|  NOT	|		|
+|  OR	|		|
+|  AND	|		|
+|  XOR	|		|
+|  JIT	|		|
+|  POP	|		|
+|  PUSH |		|
+|  EOI  |		| end of interupts
++-------+-------+--------------------------------------------------------------|
+
+		Program lang file
+
+jmp---next
+
+-include.ldi [ load file include.ldi]
+
+/next
+
+.macros<
+lda-0--12
+>
+
+.macros1<123>
+
+[coment
+	ujjj never used in that ']' !!!
+							 ^
+							this is error (sorry)
+]
+lda-0--12 lda-1-0-end [cdm-opertype-cmdmode-oper 
+									if not =='' example:
+										lda--- this is set default lda-0-0-0 but if last arg is clear cmd is 1b a not 5b]
+pop--- [this is equal pop-0-0-0 but pop--- 1b | pop-0-0-0 5b]
+lda-0--macros1[] [compiler first find lables after macros]
+			 ^
+			 this is error (sorry but after any cmd,macros,lable,comments and other have been ' ',';','\t' or '\n')
+
+,macros
+
+/end [<-- this is lable]
+
+/data =12 [<-- lable and =12 set 12byte reserve]
+=4
+
+
+Hello_world.ldi
+.videomemory<720>
+/start
+lda-0--4
+sta-0--videomemory
+/end
+
+
+
+
+

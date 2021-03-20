@@ -1,0 +1,76 @@
+#!/home/alex/documents/c++/MyProgramLang/build
+start:
+          |lda 4;sta 1;lda $2;sta Clear_ret_1;lda $3;sta Clear_ret_2;lda $4;sta Clear_ret_5;lda $5;sta Clear_ret_4;jmp Clear
+
+          lda $ball_x;sta setPixel_x;lda $ball_y;sta setPixel_y;lda 64;sta setPixel_ch
+          lda 4;sta 1;lda $2;sta setPixel_ret_1;lda $3;sta setPixel_ret_2;lda $4;sta setPixel_ret_5;lda $5;sta setPixel_ret_4;jmp setPixel
+
+          lda $h_padle;sta tmp
+padleDrawLoop:
+          lda $tmp;sub 1;sta tmp;jit next1
+          lda 0;sta setPixel_x;lda $P1_y;add $tmp;sta setPixel_y;lda 35;sta setPixel_ch
+          lda 4;sta 1;lda $2;sta setPixel_ret_1;lda $3;sta setPixel_ret_2;lda $4;sta setPixel_ret_5;lda $5;sta setPixel_ret_4;jmp setPixel
+          lda 79;sta setPixel_x;lda $P2_y;add $tmp;sta setPixel_y;lda 35;sta setPixel_ch
+          lda 4;sta 1;lda $2;sta setPixel_ret_1;lda $3;sta setPixel_ret_2;lda $4;sta setPixel_ret_5;lda $5;sta setPixel_ret_4;jmp setPixel
+          jmp padleDrawLoop
+next1:
+
+          lda 1;sta 38
+
+          nop 1000000
+          jmp start
+end:
+          brk
+h_padle:10
+ball_x:40;ball_y:13;ball_dirX:1;ball_dirY:1
+P1_y:0;P2_y:0
+tmp:0
+
+|==========================|
+|        FUNCTIONS         |
+|==========================|
+
+|---------------------------------------------------------------------------------------------------------------------------------|
+| set char(*_ch) to *_x *_y                                                                                                       |
+| lda 4;sta 1;lda $2;sta setPixel_ret_1;lda $3;sta setPixel_ret_2;lda $4;sta setPixel_ret_5;lda $5;sta setPixel_ret_4;jmp setPixel|
+|---------------------------------------------------------------------------------------------------------------------------------|
+setPixel_x:0
+setPixel_y:0
+setPixel_ch:32
+setPixel_ret_1:0;setPixel_ret_2:0;setPixel_ret_3:0;setPixel_ret_4:0
+setPixel_cursor:39;setPixel_cursor_1:0;0;0
+setPixel:
+          lda 0;sta 1
+          lda 79;sub $setPixel_x;jit setPixel_return
+          lda 24;sub $setPixel_y;jit setPixel_return
+setPixel_yloop:
+          lda $setPixel_y;sub 1;sta setPixel_y
+          jit setPixel_next
+          lda $setPixel_cursor;add 80;sta setPixel_cursor;lda $setPixel_cursor_1;adc;sta setPixel_cursor_1
+          jmp setPixel_yloop
+setPixel_next:
+          lda $setPixel_cursor;add $setPixel_x;sta setPixel_cursor;lda $setPixel_cursor_1;adc;sta setPixel_cursor_1
+          lda $setPixel_ch;sta $setPixel_cursor
+          lda 39;sta setPixel_cursor;lda 0;sta setPixel_cursor_1
+setPixel_return:
+          lda $setPixel_ret_1;add 45;sta setPixel_ret_1;lda $setPixel_ret_2;adc;sta setPixel_ret_2;lda $setPixel_ret_3;adc;sta setPixel_ret_3;lda $setPixel_ret_4;adc;sta setPixel_ret_4
+          jmp $setPixel_ret_1
+
+
+|-------------------------------
+| clear screen
+| lda 4;sta 1;lda $2;sta Clear_ret_1;lda $3;sta Clear_ret_2;lda $4;sta Clear_ret_5;lda $5;sta Clear_ret_4;jmp Clear
+|-------------------------------
+Clear_ret_1:0;Clear_ret_2:0;Clear_ret_3:0;Clear_ret_4:0
+Clear_cursor:39;Clear_cursor_1:0;0;0
+Clear:
+          lda 0;sta 1
+Clear_loop:
+          lda 32;sta $Clear_cursor
+          lda $Clear_cursor;add 1;sta Clear_cursor;lda $Clear_cursor_1;adc;sta Clear_cursor_1
+          xor 7;jit Clear_loop
+          lda $Clear_cursor;xor 255;jit Clear_loop;
+
+          lda 39;sta Clear_cursor;lda 0;sta Clear_cursor_1
+          lda $Clear_ret_1;add 45;sta Clear_ret_1;lda $Clear_ret_2;adc;sta Clear_ret_2;lda $Clear_ret_3;adc;sta Clear_ret_3;lda $Clear_ret_4;adc;sta Clear_ret_4
+          jmp $Clear_ret_1

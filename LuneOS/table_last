@@ -1,0 +1,11 @@
+./ldi_src/main.ldi
+cp ./out.bin ./tools/out.bin
+./tools/genmem
+i686-elf-as ./base/boot.asm -o boot.o
+#x86_64-elf-gcc -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra -m32
+x86_64-elf-g++ -c ./base/kernel.cpp -o kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -m32 -I"/home/alex/Документы/osdev/mi os/lib/"
+i686-elf-gcc  -T ./base/LINK.ld -o kernel -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc
+cp ./kernel ./iso/boot/kernel
+rm ./kernel.o ./boot.o ./out.bin ./tools/out.bin ./kernel
+grub-mkrescue -o myos.iso ./iso
+#qemu-system-x86_64 -kernel ./kernel -curses

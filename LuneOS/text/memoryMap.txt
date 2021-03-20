@@ -1,0 +1,7 @@
+0000:0000		A(cumulator)
+0000:0001		P(statuc)
+0000:0002		PC
+0000:0006		input(control|output)
+0000:0008		fileio(control1|name8|addr4)
+0000:0015		videomem(control|4000)(attr|char)
+0000:1000		userdata

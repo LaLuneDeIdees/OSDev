@@ -1,0 +1,109 @@
+-include/std.ldi [std macoroses]
+
+/start
+	lda--1-proc [set process addr to pit]
+	sta--1-pit
+	/mainloop  [while true]
+		lda--1-pit  [reset pit cursot to pit[0]]
+		sta--1-pitc
+		lda---0     [ser a to 0 and save]
+		push---
+			/updateloop [while saved A <256]
+			lda-2-1-pitc [load process now addres]
+			xor--1-0 [if ==0 to next1 else next]
+			jit---next
+			jmp---next1
+			/next [now run cmd]
+			
+				lda-2-1-pitc [load addr to processor]
+				push--1- [save addr]
+				jsr---getoper [getoper]
+				jsr---runcmd [runcmd]
+			
+		/next1 [up cursor pit and counter]
+			lda-1-1-pitc
+			add--1-1
+			sta--1-pitc
+			pop---
+			add---1
+			jit---mainloop [if saved a >255 to main loop else to update loop]
+			jmp---updateloop
+
+/end
+	,exit
+	
+/pitc =4
+/tmp =4
+/pit =1024 [process id table]
+
+/pdt [process discription table]
+/pid =1 [id]
+/ppc =4 [pc]
+/pa =4 [A]
+/psr =1 [SR]
+/pdsc =1 [DSC]
+/pfsc =1 [FSC]
+/pdatastack =256 [datastack]
+/pfuncstack =256 [funcstack]
+/proc [code]
+	inb---2
+/endproc [exit]
+	,exit
+	
+
+/getoper
+	pop--1- [load addr to proc desk]
+	sta--1-realk
+	sub--1-524 [set cursor to proc desk]
+	
+	add--1-1 [add 1]
+	lda-2-1-A [load PC]
+	add-1-1-realk [get real addr]
+	sta--1-nowpc
+	
+	lda-2--A [get cmd]
+	
+	sta---nowcmdbyte
+
+	lda-1-1-nowpc
+	add--1-1 [get oper]
+	lda-2-1-A
+	
+	sta--1-nowoper [save oper]
+	
+	lda-1-1-nowpc [pc = pc+5]
+	add--1-5
+	sta-1-1-nowpc
+	
+	lda-1--nowcmdbyte [get mode]
+	and---32
+	sta---mode
+	
+	lda-1--nowcmdbyte [gettype]
+	and---192
+	add-1--A
+	add-1--A
+	sta---type
+	
+	lda-1--nowcmdbyte [getcmd]
+	and---31
+	sta---nowcmdbyte
+	
+	lda-1--nowoper [for debug
+	test debug]
+	add---1
+	sta---videomem
+	lda-1--SR
+	or---4
+	sta---SR
+	rst---
+/nowcmdbyte =1
+/type =1
+/mode =1
+/nowoper =4
+/nowpc =4
+/realk =4
+
+/runcmd
+
+rst---
